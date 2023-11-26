@@ -8,57 +8,57 @@
   (list (+ a b) b (+ c d) d))
 
 (define (R a b c d)
-	(list a (+ a b) c (+ c d)))
+  (list a (+ a b) c (+ c d)))
 
 (define (node->Q* a b c d)
-	(/ (+ a b) (+ c d)))
+  (/ (+ a b) (+ c d)))
 
 (define (node->Q n)
-	(apply node->Q* n))
+  (apply node->Q* n))
 
 (define (SB->Q* u n)
-	(if (null? u)
-			(node->Q n)
-			(let ((next (car u)))
-				(SB->Q* (cdr u) (apply next n)))))
+  (if (null? u)
+      (node->Q n)
+      (let ((next (car u)))
+        (SB->Q* (cdr u) (apply next n)))))
 
 (define (SB->Q u)
-	(SB->Q* u I))
+  (SB->Q* u I))
 
 (define (Q->SB* n d)
-	(cond
-	 ((< n d) (cons L (Q->SB* n (- d n))))
-	 ((> n d) (cons R (Q->SB* (- n d) d)))
-	 (else '())))
+  (cond
+   ((< n d) (cons L (Q->SB* n (- d n))))
+   ((> n d) (cons R (Q->SB* (- n d) d)))
+   (else '())))
 
 (define (Q->SB q)
-	(let ((n (numerator q))
-				(d (denominator q)))
-		(Q->SB* n d)))
+  (let ((n (numerator q))
+        (d (denominator q)))
+    (Q->SB* n d)))
 
 (define (SSB->Q u)
-	(let ((s (car u))
-				(u (cdr u)))
-		(* s (SB->Q u))))
+  (let ((s (car u))
+        (u (cdr u)))
+    (* s (SB->Q u))))
 
 
 (define (Q->SSB q)
-	(if (= q 0)
-			'(0)
-			(let* ((q (inexact->exact q))
-						 (n (numerator q))
-						 (d (denominator q)))
-				(cond ((and (fxpositive? n) (fxpositive? d))
-							 (cons 1  (Q->SB* n d)))
-							((and (fxpositive? n) (fxnegative? d))
-							 (cons -1 (Q->SB* n (- d))))
-							((and (fxnegative? n) (fxpositive? d))
-							 (cons -1 (Q->SB* (- n) d)))
-							((and (fxnegative? n) (fxnegative? d))
-							 (cons 1  (Q->SB* (- n) (- d))))))))
+  (if (= q 0)
+      '(0)
+      (let* ((q (inexact->exact q))
+             (n (numerator q))
+             (d (denominator q)))
+        (cond ((and (fxpositive? n) (fxpositive? d))
+               (cons 1  (Q->SB* n d)))
+              ((and (fxpositive? n) (fxnegative? d))
+               (cons -1 (Q->SB* n (- d))))
+              ((and (fxnegative? n) (fxpositive? d))
+               (cons -1 (Q->SB* (- n) d)))
+              ((and (fxnegative? n) (fxnegative? d))
+               (cons 1  (Q->SB* (- n) (- d))))))))
 
 (define (sgn u)
-	(car u))
+  (car u))
 
 ;;--------------------------------------------------------------------
 ;; Numbers
@@ -67,12 +67,12 @@
 ;; Helpers
 
 (define (fmt u)
-	(apply string-append
-				 (map (lambda (n)
-								(cond
-								 ((eq? n L) "L")
-								 ((eq? n R) "R")
-								 ((= n -1)  "-")
-								 ((= n 1)   "")
-								 ((= n 0 )  "0")))
-							u)))
+  (apply string-append
+         (map (lambda (n)
+                (cond
+                 ((eq? n L) "L")
+                 ((eq? n R) "R")
+                 ((= n -1)  "-")
+                 ((= n 1)   "")
+                 ((= n 0 )  "0")))
+              u)))
